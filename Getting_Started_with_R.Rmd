@@ -1,0 +1,100 @@
+---
+title: "Getting Started with R"
+author: "Alberto Melendez"
+date: "January 16, 2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+```
+
+#Introduction
+This is *AlbertoMelendez*'s first assignment for **Geog458**. Our course page can be accessed [here](https://canvas.uw.edu/courses/1269928)."
+
+##Education
+![](https://s3-us-west-2.amazonaws.com/uw-s3-cdn/wp-content/uploads/sites/98/2014/09/07214435/Signature_Stacked_Purple_Hex.png)
+
+"I study Geography here."
+
+##Task 4
+
+This is the Pythagorean Theorem: $$a^2 + b^2 = c^2$$
+
+My reference is [here](https://www.overleaf.com/learn/latex/Mathematical_expressions)
+
+##Task 5 
+  
+  n=2 | a^n  |  b^n   |  c^n
+|-----|----- | ------ | -----
+|     |    9 |  16    |  25
+|     |   16 |  25    |  41
+|     |    4 |  100   |  400
+  
+
+```
+{r, Tasks, echo=TRUE}
+
+##Task 6
+
+100/10+2   
+100/(10+2)
+
+##Task 7
+
+x <- 8 * 3  
+x + 10
+
+a = x - 7  
+b = 3 + a  
+
+((12 + a) - 3) / 2  
+
+a * b / 34 + 6  
+
+b * 40 / ((a + 3) - 12) 
+
+##Task 8
+
+v = seq(1:30)  
+name = c("Kat", "Tim", "Dina", "Wayne")
+length(v) 
+length(name) 
+sum(v) 
+
+"sum(name), will not work due to invalid type of values in the 'name' vector  
+ which contains all string values."
+
+##Task 9
+
+five = seq(1:5)
+six_to_ten = c(6:10)
+sum_vectors = six_to_ten + five
+print(sum_vectors) 
+product = five * six_to_ten  
+print(product)
+
+##Task 10
+
+full_seq = c(five, six_to_ten)  
+my_matrix = rbind(five, six_to_ten, product)  
+matrix_frame = as.data.frame((my_matrix))
+
+#Loading the Data
+
+"This is how to load data into R and how to convert it."
+
+library(tidyverse)  
+china_data = read.csv("China_EO_49to17.csv")  
+china_tibble = as_tibble(china_data) 
+desc_china_tib = arrange(china_tibble, desc(Year))
+china_province = desc_china_tib[c("Year", "Beijing_Output", "Shanghai_Output")]  
+print(china_province)  
+china_ratio = china_province %>%  
+              filter(Year <= 2017) %>%  
+              mutate(Output_Ratio = Beijing_Output / Shanghai_Output)  
+```
+
+
+
