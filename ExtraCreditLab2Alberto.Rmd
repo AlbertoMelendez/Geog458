@@ -1,0 +1,73 @@
+---
+title: "Extra Credit"
+author: "Alberto Melendez"
+date: "February 27, 2019"
+output: html_document
+---
+
+#Extra Credit: Lab 2 Make up
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+ 
+```{r libraries and data, include = FALSE}
+# Accessing all the libraries needed, and reading the shapefile and csv file.
+library(sf)
+library(tmap)
+library(tidyverse)
+library(tmaptools)
+wac_2015 <- read.csv("wa_wac_S000_JT00_2015.csv")
+tacoma_blocks_shp <- st_read("tacomablocks-polygon.shp")
+```
+
+```{r column creation and joining, include = FALSE}
+
+# Extracting data only from these columns listed from wac_2015 into a new dataframe.
+column_data <- select(wac_2015, w_geocode, CNS05, CNS06, CNS16, CD01, CD04)
+
+# Remove the last 4 digits of the w_geocode.
+column_data$w_geocode[which(length(column_data$w_geocode) == 14)] <- paste0("0", 
+                                                                    column_data$w_geocode[which(length(column_data$w_geocode)                                                                     == 4)])
+
+# Create a new column "GEOID10" for the new dataframe for merging it to the shapefile (tacoma_blocks_shp).
+column_data$GEOID10 = column_data$w_geocode  
+
+# Merge the new dataframe with the shapefile (tacoma_blocks_shp) by the "GEOID10" column.
+wac_blocks <- merge(tacoma_blocks_shp, column_data, by = c("GEOID10"))
+```
+
+## Static Choropleth Maps For Specific field-related Jobs in Tacoma
+```{r Static maps for Tacoma, include = TRUE}
+# Static choropleth maps on the number of jobs in manufacturing, transportion and warehousing, 
+# and healthcare in Tacoma. They are to to plotted in the last code chunk.
+tmap_mode("plot")
+
+manufacturing <- tm_shape(wac_blocks) + tm_fill(col = "CNS05", title = "Number of Jobs") + tm_layout(title = "All Manufacturing Jobs in Tacoma", title.position = c("LEFT", "TOP")) + tm_layout(aes.palette = list(seq = "YlGnBu")) + tm_borders()
+
+transportation <- tm_shape(wac_blocks) + tm_fill(col = "CNS06", title = "Number of Jobs") + tm_layout(title = "All Transportation and Warehousing Jobs in Tacoma", title.position = c("RIGHT", "TOP")) + tm_layout(aes.palette = list(seq = "RdPu")) + tm_borders()
+
+healthcare <- tm_shape(wac_blocks) + tm_fill(col = "CNS16", title = "Number of Jobs") + tm_layout(title = "All Health Care and Social Assistance Jobs in Tacoma", title.position = c("RIGHT", "TOP")) + tm_layout(aes.palette = list(seq = "YlGn")) + tm_borders()
+
+
+manufacturing
+transportation
+healthcare
+```
+
+### Interactive Choropleth Map of Jobs for Workers with Bachelor's Degree or Higher in Tacoma
+```{r Interactive Map for Employees with Higher education, include = TRUE}
+#Interative cholopleth maps on jobs with employees with a bachelor's degree or higher and those with lower than a 
+# high school education in Tacoma
+tmap_mode("view") 
+tm_shape(wac_blocks) + tm_fill("CD01", title = "Number of Jobs") + tm_layout(aes.palette = list(seq = "-RdYlGn")) + tm_borders()
+```
+
+### Interactive Chloropleth Map of All Jobs for those With Less Than High School Level Education in Tacoma
+```{r Interactive map For jobs for those With Less Than HS Education, include=TRUE}
+# Createse interactive map for jobs with less than high school education
+tm_shape(wac_blocks) + tm_fill("CD04", title = "Number of Jobs") + 
+  tm_layout(aes.palette = list(seq = "YlOrBr")) + tm_borders()
+```
+
